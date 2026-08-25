@@ -1,24 +1,5 @@
 package org.firstinspires.ftc.team18443;
 
-// ============================================================================
-//  RobotHardware.java                                       GalacticLions2526
-// ============================================================================
-//
-//   Description:
-//      Hardware abstraction layer for the robot. This class defines and
-//      initializes all hardware components (motors, servos, sensors, etc.),
-//      provides an API for drive and mechanism control, and implements
-//      motion/utility methods for both TeleOp and Autonomous modes.
-//
-//   Usage:
-//      - Instantiate RobotHardware with a LinearOpMode reference
-//      - Call init() in runOpMode() before accessing any hardware
-//
-// ============================================================================
-// This program is released under the BSD-3-Clause-Clear License
-// See LICENSE file in root of this repository
-// ============================================================================
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -31,6 +12,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import androidx.annotation.*;
 
+/// # Robot Hardware Abstraction Layer
+/// 
+/// Decription!
+///
+/// ## Key Capabilities
+/// - 
+/// ### Example Usage
+/// ```java
+/// RobotHardware robot = new RobotHardware(this);
+/// robot.init();
+/// ```
 public class RobotHardware {
 
     //region Hardware Device Definitions
