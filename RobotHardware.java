@@ -12,17 +12,43 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import androidx.annotation.*;
 
-/// # Robot Hardware Abstraction Layer
-/// 
-/// Decription!
-///
-/// ## Key Capabilities
-/// - 
-/// ### Example Usage
-/// ```java
-/// RobotHardware robot = new RobotHardware(this);
-/// robot.init();
-/// ```
+/**
+ * <h1>Robot Hardware Abstraction Layer</h1>
+ *
+ * <p>
+ * Provides a centralized interface for configuring and controlling the robot's
+ * drivetrain, IMU, and other hardware devices. This class abstracts the
+ * hardware-specific implementation from individual OpModes and provides
+ * reusable methods for TeleOp and autonomous robot control.
+ * </p>
+ *
+ * <h2>Key Capabilities</h2>
+ * <ul>
+ *     <li>Initializes and configures the mecanum drivetrain motors</li>
+ *     <li>Initializes and configures the onboard IMU</li>
+ *     <li>Provides robot-centric and field-centric mecanum driving</li>
+ *     <li>Provides IMU heading, yaw reset, and heading-error utilities</li>
+ *     <li>Provides normalized drivetrain power control</li>
+ *     <li>Provides joystick deadzone processing</li>
+ *     <li>Provides proportional power and velocity ramping</li>
+ *     <li>Provides encoder-based linear and strafing movement</li>
+ *     <li>Provides IMU-assisted rotational movement</li>
+ * </ul>
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * public class MyTeleOp extends LinearOpMode {
+ *
+ *     private RobotHardware robot;
+ *
+ *     @Override
+ *     public void runOpMode() {
+ *         robot = new RobotHardware(this);
+ *         robot.init();
+ *     }
+ * }
+ * }</pre>
+ */
 public class RobotHardware {
 
     //region Hardware Device Definitions
