@@ -72,7 +72,7 @@ public class RobotHardware {
     //endregion
 
     //region Drive and Control Constants
-    static final double JOYSTICK_DEADZONE     = 0.1;
+    static final double JOYSTICK_DEADZONE = 0.1;
 
     public double strafeComp = 1.10; // Strafe compensation factor (empirical)
     //endregion
