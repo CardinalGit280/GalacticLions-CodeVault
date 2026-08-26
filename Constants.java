@@ -5,13 +5,7 @@ import com.bylazar.ftcontrol.panels.configurables.annotations.Configurable;
 /**
  * <h1>Robot Constants</h1>
  *
- * <p>
- * </p>
- *
- * <h2>Key Capabilities</h2>
- * <ul>
- *     <li></li>
- * </ul>
+ * <p>Centralized constants for hardware names and robot configuration.</p>
  */
 @Configurable
 public class Constants {
@@ -19,9 +13,7 @@ public class Constants {
   // Private constructor to prevent unnecessary instantiation
   private Constants() {}
   
-  /**
-   * Hardware device names.
-   */
+  /** Hardware device names */
   public static class Hardware {
     public static String MOTOR_FRONT_LEFT  = "fl";
     public static String MOTOR_FRONT_RIGHT = "fr";
@@ -29,14 +21,13 @@ public class Constants {
     public static String MOTOR_BACK_RIGHT  = "br";
   }
   
-  /**
-   * Robot physical dimensions and drivetrain parameters
-   */
+  /** Robot physical dimensions and drivetrain parameters */
   public static class Drive {
     public static double COUNTS_PER_ROTATION   = 537.7;
     public static double WHEEL_DIAMETER_INCHES = 3.779;
     public static double DRIVE_GEAR_REDUCTION  = 1.0;
-    public static double COUNTS_PER_INCH       = (COUNTS_PER_ROTATION * DRIVE_GEAR_REDUCTION) 
-                                               / (WHEEL_DIAMETER_INCHES * Math.PI);
+    public static double COUNTS_PER_INCH =
+        (COUNTS_PER_ROTATION * DRIVE_GEAR_REDUCTION)
+            / (WHEEL_DIAMETER_INCHES * Math.PI);
   }
 }
