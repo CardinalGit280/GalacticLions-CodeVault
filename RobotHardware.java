@@ -68,7 +68,7 @@ public class RobotHardware {
     public IMU imu;
     //endregion
 
-    //region Tunable Constants
+    //region Drive and Control Constants
     // Encoder and motion parameters
     static final double COUNTS_PER_ROTATION   = 537.7; // GoBilda 312 RPM Yellow Jacket
     static final double WHEEL_DIAMETER_INCHES = 3.779; // GoBilda mecanum wheels
@@ -137,7 +137,7 @@ public class RobotHardware {
     }
     //endregion
 
-    //region IMU and Orientation Helpers
+    //region IMU and Heading Utilities
     /**
      * Resets the robot's heading (yaw) angle to zero.
      * <p>
@@ -200,7 +200,7 @@ public class RobotHardware {
     }
     //endregion
 
-    //region Utility and General-Purpose Methods
+    //region Drive Utilities and Input Processing
     /**
      * Sets the power applied to each drivetrain motor using raw power values.
      * <p>
@@ -323,7 +323,7 @@ public class RobotHardware {
     }
     //endregion
 
-    //region TeleOp Drive Methods
+    //region Drivetrain Control Methods
     /**
      * Drives the robot in a robot-centric manner using a mecanum drive.
      * <p>
@@ -376,7 +376,7 @@ public class RobotHardware {
     }
     //endregion
 
-    //region Autonomous Movement and Mechanism Control Methods
+    //region Autonomous Drivetrain Movement
     /**
      * Moves the robot forward or backward a specified distance in inches at a
      * given speed.
