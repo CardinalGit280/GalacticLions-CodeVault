@@ -10,6 +10,9 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
+import static org.firstinspires.ftc.team18443.Constants.Hardware.*;
+import static org.firstinspires.ftc.team18443.Constants.Drive.*;
+
 import androidx.annotation.*;
 
 /**
@@ -69,12 +72,6 @@ public class RobotHardware {
     //endregion
 
     //region Drive and Control Constants
-    // Encoder and motion parameters
-    static final double COUNTS_PER_ROTATION   = 537.7; // GoBilda 312 RPM Yellow Jacket
-    static final double WHEEL_DIAMETER_INCHES = 3.779; // GoBilda mecanum wheels
-    static final double DRIVE_GEAR_REDUCTION  = 1.0;   // 1:1 gear ratio
-    static final double COUNTS_PER_INCH       = (COUNTS_PER_ROTATION * DRIVE_GEAR_REDUCTION) /
-                                                (WHEEL_DIAMETER_INCHES * Math.PI);
     static final double JOYSTICK_DEADZONE     = 0.1;
 
     public double strafeComp = 1.10; // Strafe compensation factor (empirical)
@@ -105,10 +102,10 @@ public class RobotHardware {
      */
     public void init() {
         // Map motors by configuration names in the robot controller app
-        frontLeft  = opMode.hardwareMap.get(DcMotorEx.class, "fl");
-        frontRight = opMode.hardwareMap.get(DcMotorEx.class, "fr");
-        backLeft   = opMode.hardwareMap.get(DcMotorEx.class, "bl");
-        backRight  = opMode.hardwareMap.get(DcMotorEx.class, "br");
+        frontLeft  = opMode.hardwareMap.get(DcMotorEx.class, MOTOR_FRONT_LEFT);
+        frontRight = opMode.hardwareMap.get(DcMotorEx.class, MOTOR_FRONT_RIGHT);
+        backLeft   = opMode.hardwareMap.get(DcMotorEx.class, MOTOR_BACK_LEFT);
+        backRight  = opMode.hardwareMap.get(DcMotorEx.class, MOTOR_BACK_RIGHT);
 
         // Reverse left-side drive motors so positive power moves robot forward
         // Swap these if your robot's wiring or gearboxes are mirrored
