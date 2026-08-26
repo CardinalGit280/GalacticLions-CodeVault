@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.team18443;
 
 import com.bylazar.ftcontrol.panels.configurables.annotations.Configurable;
+import androidx.annotation.*;
 
 /**
  * <h1>Robot Constants</h1>
@@ -15,10 +16,10 @@ public class Constants {
   
   /** Hardware device names */
   public static class Hardware {
-    public static String MOTOR_FRONT_LEFT  = "fl";
-    public static String MOTOR_FRONT_RIGHT = "fr";
-    public static String MOTOR_BACK_LEFT   = "bl";
-    public static String MOTOR_BACK_RIGHT  = "br";
+    @NonNull public static String MOTOR_FRONT_LEFT  = "fl";
+    @NonNull public static String MOTOR_FRONT_RIGHT = "fr";
+    @NonNull public static String MOTOR_BACK_LEFT   = "bl";
+    @NonNull public static String MOTOR_BACK_RIGHT  = "br";
   }
   
   /** Robot physical dimensions and drivetrain parameters */
