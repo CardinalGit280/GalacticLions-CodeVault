@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-@TeleOp(name="StraferTeleOp", group="TeleOp")
-// @Disabled
 /**
  * <h1>Srafer Teleoperation Mode</h1>
  *
@@ -17,6 +15,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  *     <li></li>
  * </ul>
  */
+@TeleOp(name="StraferTeleOp", group="TeleOp")
+// @Disabled
 public class StraferTeleOp extends LinearOpMode {
 
     @Override
