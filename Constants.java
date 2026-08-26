@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.team18443;
 
-import com.bylazar.ftcontrol.panels.configurables.annotations.Configurable;
+import com.bylazar.configurables.annotations.Configurable;
 import androidx.annotation.*;
 
 /**
