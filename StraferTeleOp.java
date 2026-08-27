@@ -19,10 +19,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 // @Disabled
 public class StraferTeleOp extends LinearOpMode {
 
+    private RobotHardware robot;
+
     @Override
     public void runOpMode() {
         //region Hardware Setup and Initialization
-        RobotHardware robot = new RobotHardware(this);
+        robot = new RobotHardware(this);
         robot.init();
         robot.resetYaw();
 
