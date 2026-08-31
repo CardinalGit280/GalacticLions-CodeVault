@@ -33,7 +33,6 @@ import androidx.annotation.*;
  *     <li>Provides IMU heading, yaw reset, and heading-error utilities</li>
  *     <li>Provides normalized drivetrain power control</li>
  *     <li>Provides joystick deadzone processing</li>
- *     <li>Provides proportional power and velocity ramping</li>
  *     <li>Provides encoder-based linear and strafing movement</li>
  *     <li>Provides IMU-assisted rotational movement</li>
  * </ul>
@@ -235,64 +234,6 @@ public class RobotHardware {
         frontRight.setMode(mode);
         backLeft.setMode(mode);
         backRight.setMode(mode);
-    }
-
-    /**
-     * Gradually adjusts motor power toward a target value using a proportional
-     * ramp.
-     *
-     * @param currentPower The current power value
-     * @param targetPower  The desired target power to approach
-     *
-     * @return The adjusted motor power after applying proportional ramping.
-     */
-    @CheckResult(suggest = "pwr = applyRampToPower(currentPower, targetPower)")
-    public double applyRampToPower(double currentPower, double targetPower) {
-        double kpUp   = 0.1;
-        double kpDown = 0.2;
-
-        double error = targetPower - currentPower;
-
-        if (error > 0) {
-            // Ramp up
-            currentPower += kpUp * error;
-        }
-        else if (error < 0) {
-            // Ramp down
-            currentPower += kpDown * error;
-        }
-
-        currentPower = Math.max(0.0, Math.min(1.0, currentPower));
-
-        return currentPower;
-    }
-
-    /**
-     * Gradually adjusts motor velocity toward a target value using a
-     * proportional ramp.
-     *
-     * @param currentVelocity The current velocity value
-     * @param targetVelocity  The desired target velocity to approach
-     *
-     * @return The adjusted motor velocity after applying proportional ramping.
-     */
-    @CheckResult(suggest = "vel = applyRampToVelocity(currentVelocity, targetVelocity)")
-    public double applyRampToVelocity(double currentVelocity, double targetVelocity) {
-        double kpUp   = 0.1;
-        double kpDown = 0.2;
-
-        double error = targetVelocity - currentVelocity;
-
-        if (error > 0) {
-            // Ramp up
-            currentVelocity += kpUp * error;
-        }
-        else if (error < 0) {
-            // Ramp down
-            currentVelocity += kpDown * error;
-        }
-
-        return currentVelocity;
     }
 
     /**
