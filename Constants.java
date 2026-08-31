@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.team18443;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.bylazar.configurables.annotations.Configurable;
 import androidx.annotation.*;
 
@@ -21,11 +20,6 @@ public class Constants {
     @NonNull public static String MOTOR_FRONT_RIGHT = "fr";
     @NonNull public static String MOTOR_BACK_LEFT   = "bl";
     @NonNull public static String MOTOR_BACK_RIGHT  = "br";
-
-    public static RevHubOrientationOnRobot.LogoFacingDirection IMU_LOGO_DIR = 
-            RevHubOrientationOnRobot.LogoFacingDirection.UP;
-    public static RevHubOrientationOnRobot.UsbFacingDirection IMU_USB_DIR = 
-            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
   }
   
   /** Robot physical dimensions and drivetrain parameters */
