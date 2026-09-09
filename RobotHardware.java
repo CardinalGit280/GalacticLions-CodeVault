@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.team18443;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -39,13 +40,12 @@ import androidx.annotation.*;
  *
  * <h3>Example Usage</h3>
  * <pre>{@code
- * public class MyTeleOp extends LinearOpMode {
+ * public class MyTeleOp extends OpMode {
  *
- *     private RobotHardware robot;
+ *     RobotHardware robot = new RobotHardware(this);
  *
  *     @Override
- *     public void runOpMode() {
- *         robot = new RobotHardware(this);
+ *     public void init() {
  *         robot.init();
  *     }
  * }
@@ -54,8 +54,10 @@ import androidx.annotation.*;
 public class RobotHardware {
 
     //region Hardware Device Definitions
-    // Gain access to methods in the calling OpMode
-    private final LinearOpMode opMode;
+    // Internal references to the calling OpMode
+    private OpMode opMode;
+    private HardwareMap hardwareMap;
+    private Telemetry telemetry;
 
     // Drive motors for the mecanum drive base
     public DcMotorEx frontLeft, frontRight, backLeft, backRight;
@@ -77,9 +79,15 @@ public class RobotHardware {
     //endregion
 
     //region Constructor
-    // Define a constructor that allows the OpMode to pass a reference to itself
-    public RobotHardware(@NonNull LinearOpMode opMode) {
+    /**
+     * Constructor for the robot hardware.
+     *
+     * @param opMode
+     */
+    public RobotHardware(@NonNull OpMode opMode) {
         this.opMode = opMode;
+        this.hardwareMap = opMode.hardwareMap;
+        this.telemetry = opMode.telemetry;
     }
     //endregion
 
@@ -94,17 +102,13 @@ public class RobotHardware {
      *   <li>Zero power behavior configuration</li>
      *   <li>IMU mounting orientation and initialization</li>
      * </ul>
-     * <p>
-     * This method must be called exactly once at the beginning of
-     * {@link LinearOpMode#runOpMode() runOpMode()} before any motors,
-     * sensors, or actuators are accessed.
      */
     public void init() {
         // Map motors by configuration names in the robot controller app
-        frontLeft  = opMode.hardwareMap.get(DcMotorEx.class, MOTOR_FRONT_LEFT);
-        frontRight = opMode.hardwareMap.get(DcMotorEx.class, MOTOR_FRONT_RIGHT);
-        backLeft   = opMode.hardwareMap.get(DcMotorEx.class, MOTOR_BACK_LEFT);
-        backRight  = opMode.hardwareMap.get(DcMotorEx.class, MOTOR_BACK_RIGHT);
+        frontLeft  = hardwareMap.get(DcMotorEx.class, MOTOR_FRONT_LEFT);
+        frontRight = hardwareMap.get(DcMotorEx.class, MOTOR_FRONT_RIGHT);
+        backLeft   = hardwareMap.get(DcMotorEx.class, MOTOR_BACK_LEFT);
+        backRight  = hardwareMap.get(DcMotorEx.class, MOTOR_BACK_RIGHT);
 
         // Reverse left-side drive motors so positive power moves robot forward
         // Swap these if your robot's wiring or gearboxes are mirrored
@@ -121,15 +125,15 @@ public class RobotHardware {
 
         // Configure IMU mounting orientation to match physical mounting;
         // incorrect orientation will affect field-centric driving
-        imu = opMode.hardwareMap.get(IMU.class, "imu");
+        imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 // Default assumption: logo up, USB port facing forward
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         imu.initialize(parameters);
 
-        opMode.telemetry.addData(">", "Hardware Initialized");
-        opMode.telemetry.update();
+        telemetry.addData(">", "Hardware Initialized");
+        telemetry.update();
     }
     //endregion
 
@@ -316,11 +320,34 @@ public class RobotHardware {
 
     //region Autonomous Drivetrain Movement
     /**
+     * Gets the calling OpMode as a LinearOpMode.
+     * <p>
+     * Autonomous movement methods in this class require a LinearOpMode because
+     * they use blocking loops and the LinearOpMode lifecycle methods
+     * {@link LinearOpMode#opModeIsActive()} and {@link LinearOpMode#idle()}.
+     * </p>
+     * @return the calling LinearOpMode, or null if the caller is not a LinearOpMode
+     */
+    @CheckResult(suggest = "LinearOpMode linearOpMode = getLinearOpMode()")
+    private LinearOpMode getLinearOpMode() {
+        if (!(opMode instanceof LinearOpMode)) {
+            return null;
+        }
+        return (LinearOpMode) opMode;
+    }
+    
+    /**
      * Moves the robot forward or backward a specified distance in inches at a
      * given speed.
      */
     @WorkerThread
     public void moveToPosition(double inches, double speed) {
+        LinearOpMode linearOpMode = getLinearOpMode();
+        if (linearOpMode == null) {
+            setDrivePower(0, 0, 0, 0);
+            return;
+        }
+        
         // Determine new target position and pass to motor controller
         int moveCounts = (int)(Math.round(inches * COUNTS_PER_INCH));
         frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + moveCounts);
@@ -335,12 +362,15 @@ public class RobotHardware {
         setDrivePower(power, power, power, power);
 
         // Loop until all motors have reached their targets
-        while (opMode.opModeIsActive() && (frontLeft.isBusy() && frontRight.isBusy()
-                && backLeft.isBusy() && backRight.isBusy())) {
-            opMode.telemetry.addData("Drive", "Moving...");
-            opMode.telemetry.update();
+        while (linearOpMode.opModeIsActive()
+               && (frontLeft.isBusy()
+               && frontRight.isBusy()
+               && backLeft.isBusy()
+               && backRight.isBusy())) {
+            telemetry.addData("Drive", "Moving...");
+            telemetry.update();
 
-            opMode.idle();
+            linearOpMode.idle();
         }
 
         // Stop all motion
@@ -361,6 +391,12 @@ public class RobotHardware {
      */
     @WorkerThread
     public void turnWithGyro(double degrees, double speedDirection) {
+        LinearOpMode linearOpMode = getLinearOpMode();
+        if (linearOpMode == null) {
+            setDrivePower(0, 0, 0, 0);
+            return;
+        }
+        
         // Create an object to receive the IMU angles
         double heading = getHeadingDeg();
 
@@ -368,7 +404,7 @@ public class RobotHardware {
         double targetHeading = AngleUnit.normalizeDegrees(heading + degrees);
 
         // Phase 1: Coarse turn
-        while (opMode.opModeIsActive()) {
+        while (linearOpMode.opModeIsActive()) {
             heading = getHeadingDeg();
             double error = getHeadingError(heading, targetHeading);
 
@@ -378,7 +414,7 @@ public class RobotHardware {
         }
 
         // Phase 2: Fine adjustment
-        while (opMode.opModeIsActive()) {
+        while (linearOpMode.opModeIsActive()) {
             heading = getHeadingDeg();
             double error = getHeadingError(heading, targetHeading);
 
@@ -408,6 +444,12 @@ public class RobotHardware {
      */
     @WorkerThread
     public void strafeToPosition(double inches, double speed) {
+        LinearOpMode linearOpMode = getLinearOpMode();
+        if (linearOpMode == null) {
+            setDrivePower(0, 0, 0, 0);
+            return;
+        }
+        
         // Determine new target position and pass to motor controller
         int moveCounts = (int)(Math.round(inches * COUNTS_PER_INCH * strafeComp));
         frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + moveCounts);
@@ -422,12 +464,15 @@ public class RobotHardware {
         setDrivePower(power, power, power, power);
 
         // Loop until all motors have reached their targets
-        while (opMode.opModeIsActive() && (frontLeft.isBusy() && frontRight.isBusy()
-                && backLeft.isBusy() && backRight.isBusy())) {
-            opMode.telemetry.addData("Drive", "Strafing...");
-            opMode.telemetry.update();
+        while (linearOpMode.opModeIsActive()
+               && (frontLeft.isBusy()
+               && frontRight.isBusy()
+               && backLeft.isBusy()
+               && backRight.isBusy())) {
+            telemetry.addData("Drive", "Strafing...");
+            telemetry.update();
 
-            opMode.idle();
+            linearOpMode.idle();
         }
 
         // Stop all motion
