@@ -328,7 +328,6 @@ public class RobotHardware {
      * </p>
      * @return the calling LinearOpMode, or null if the caller is not a LinearOpMode
      */
-    @CheckResult(suggest = "LinearOpMode linearOpMode = getLinearOpMode()")
     private LinearOpMode getLinearOpMode() {
         if (!(opMode instanceof LinearOpMode)) {
             return null;
