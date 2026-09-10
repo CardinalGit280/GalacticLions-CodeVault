@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  */
 @TeleOp(name="StraferTeleOp", group="TeleOp")
 // @Disabled
-public class StraferTeleOp extends LinearOpMode {
+public class StraferTeleOp_Linear extends LinearOpMode {
 
     private RobotHardware robot;
 
