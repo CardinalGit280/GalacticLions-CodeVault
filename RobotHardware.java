@@ -138,7 +138,7 @@ public class RobotHardware {
 
     /**
      * Returns the robot's current IMU yaw angle in radians which is normalized 
-     * to the range {@code [-π, π)}.
+     * to the range [-π, π).
      *
      * @return the current robot heading in radians
      */
@@ -151,7 +151,7 @@ public class RobotHardware {
 
     /**
      * Returns the robot's current IMU yaw angle in degrees which is normalized 
-     * to the range {@code [-180°, 180°)}.
+     * to the range [-180°, 180°).
      *
      * @return the current robot heading in degrees
      */
@@ -168,7 +168,7 @@ public class RobotHardware {
      * @param current the current heading in degrees
      * @param target the desired heading in degrees
      *
-     * @return shortest signed angular error from {@code current} to {@code target},
+     * @return shortest signed angular error from current to target,
      *         in degrees
      */
     @CheckResult(suggest = "error = getHeadingError(current, target)")
@@ -232,7 +232,7 @@ public class RobotHardware {
     /**
      * Applies the configured joystick deadzone and rescales the remaining input.
      *
-     * @param input the raw joystick input, in the range {@code [-1, 1]}
+     * @param input the raw joystick input, in the range [-1, 1]
      *
      * @return deadzone-adjusted joystick input
      */
@@ -303,7 +303,7 @@ public class RobotHardware {
     /**
      * Returns the owning OpMode as a {@link LinearOpMode}, if applicable.
      *
-     * @return the owning OpMode as a {@link LinearOpMode}, or {@code null} if
+     * @return the owning OpMode as a {@link LinearOpMode}, or null if
      *         the owning OpMode is not a LinearOpMode
      */
     private LinearOpMode getLinearOpMode() {
@@ -320,7 +320,7 @@ public class RobotHardware {
      *
      * @param inches distance to travel in inches; positive values move forward,
      *               negative values move backward
-     * @param speed motor power magnitude, normally in the range {@code [0, 1]}
+     * @param speed motor power magnitude, normally in the range [0, 1]
      */
     @WorkerThread
     public void moveToPosition(double inches, double speed) {
@@ -368,7 +368,7 @@ public class RobotHardware {
      * @param degrees relative rotation in degrees; positive and negative values
      *                represent opposite rotation directions
      * @param speedDirection signed motor power used for the coarse rotation;
-     *                       its magnitude should normally be in {@code [0, 1]}
+     *                       its magnitude should normally be in [0, 1]
      */
     @WorkerThread
     public void turnWithGyro(double degrees, double speedDirection) {
@@ -430,7 +430,7 @@ public class RobotHardware {
      * Strafes the robot by a specified distance using drivetrain encoders.
      *
      * @param inches distance to strafe in inches
-     * @param speed motor power magnitude, normally in the range {@code [0, 1]}
+     * @param speed motor power magnitude, normally in the range [0, 1]
      */
     @WorkerThread
     public void strafeToPosition(double inches, double speed) {
