@@ -13,9 +13,9 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.team18443.Constants.Hardware;
 
-import static org.firstinspires.ftc.team5898.Constants.Hardware.*;
-import static org.firstinspires.ftc.team5898.Constants.Drive.*;
+import static org.firstinspires.ftc.team5898.Constants.*;
 
 /**
  * Provides a main dashboard for initializing and controlling the robot's
@@ -43,9 +43,9 @@ public class RobotHardware {
     // Servos for game element manipulators
     // public Servo;
 
-    // Inertial Measurement Unit (IMU) for orientation and field-centric control
+    // Inertial Measurement Unit (IMU) for orientation
     public IMU imu;
-   
+
     //endregion
 
     //region Drive and Control Constants
@@ -84,27 +84,26 @@ public class RobotHardware {
      */
     public void init() {
         // Map drivetrain motors using the names configured in the Robot Controller app.
-        frontLeft  = hardwareMap.get(DcMotorEx.class, MOTOR_FRONT_LEFT);
-        frontRight = hardwareMap.get(DcMotorEx.class, MOTOR_FRONT_RIGHT);
-        backLeft   = hardwareMap.get(DcMotorEx.class, MOTOR_BACK_LEFT);
-        backRight  = hardwareMap.get(DcMotorEx.class, MOTOR_BACK_RIGHT);
+        frontLeft  = hardwareMap.get(DcMotorEx.class, Hardware.MOTOR_FRONT_LEFT);
+        frontRight = hardwareMap.get(DcMotorEx.class, Hardware.MOTOR_FRONT_RIGHT);
+        backLeft   = hardwareMap.get(DcMotorEx.class, Hardware.MOTOR_BACK_LEFT);
+        backRight  = hardwareMap.get(DcMotorEx.class, Hardware.MOTOR_BACK_RIGHT);
 
         // Reverse the left-side motors so positive power corresponds to forward motion.
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
 
         // Brake the drivetrain when power is set to zero.
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        for (DcMotorEx motor : new DcMotorEx[]{frontLeft, frontRight, backLeft, backRight}) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
 
         // Map and initialize the IMU.
         //
         // These directions must match the physical orientation of the REV Hub.
         // An incorrect orientation will produce incorrect heading measurements
         // and can cause field-centric driving to behave incorrectly.
-        imu = hardwareMap.get(IMU.class, "imu");
+        imu = hardwareMap.get(IMU.class, Hardware.IMU);
 
         IMU.Parameters parameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
@@ -128,7 +127,6 @@ public class RobotHardware {
      * 
      * Note that resetting yaw does not physically rotate the robot and does not 
      * reset pitch or roll.
-     * </p>
      */
     public void resetYaw() {
         if (imu != null) {
@@ -285,8 +283,6 @@ public class RobotHardware {
      * @param rx the rotational input
      */
     public void driveFieldCentric(double x, double y, double rx) {
-        x *= strafeComp;
-
         double heading = getHeadingRad();
 
         // Rotate the field-relative translation vector into robot coordinates.
