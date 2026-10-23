@@ -34,16 +34,17 @@ public class RobotHardware {
     private Telemetry telemetry;
 
     // Drive motors for the mecanum drive base
-    public DcMotorEx frontLeft, frontRight, backLeft, backRight;
+    private final DcMotorEx frontLeft, frontRight, backLeft, backRight;
+    private final DcMotorEx[] driveMotors;
 
     // Mechanism motors for game-specific mechanisms
-    // public DcMotorEx;
+    // private final DcMotorEx;
 
     // Servos for game element manipulators
-    // public Servo;
+    // private final Servo;
 
     // Inertial Measurement Unit (IMU) for orientation
-    public IMU imu;
+    private final IMU imu;
 
     //endregion
 
@@ -82,18 +83,20 @@ public class RobotHardware {
      * before attempting to control the drivetrain or read the IMU.
      */
     public void init() {
-        // Map drivetrain motors using the names configured in the Robot Controller app.
+        // Map motors using the names configured in Constants.java.
         frontLeft  = hardwareMap.get(DcMotorEx.class, Hardware.MOTOR_FRONT_LEFT);
         frontRight = hardwareMap.get(DcMotorEx.class, Hardware.MOTOR_FRONT_RIGHT);
         backLeft   = hardwareMap.get(DcMotorEx.class, Hardware.MOTOR_BACK_LEFT);
         backRight  = hardwareMap.get(DcMotorEx.class, Hardware.MOTOR_BACK_RIGHT);
 
+        driveMotors = new DcMotorEx[]{frontLeft, frontRight, backLeft, backRight};
+
         // Reverse the left-side motors so positive power corresponds to forward motion.
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
-
+        
         // Brake the drivetrain when power is set to zero.
-        for (DcMotorEx motor : new DcMotorEx[]{frontLeft, frontRight, backLeft, backRight}) {
+        for (DcMotorEx motor : driveMotors) {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
@@ -104,12 +107,9 @@ public class RobotHardware {
         // and can cause field-centric driving to behave incorrectly.
         imu = hardwareMap.get(IMU.class, Hardware.IMU);
 
-        IMU.Parameters parameters = new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-
-        imu.initialize(parameters);
+        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
 
         telemetry.addData(">", "Hardware Initialized");
         telemetry.update();
@@ -120,14 +120,14 @@ public class RobotHardware {
     //region IMU and Heading Utilities
 
     /**
-     * Resets the IMU's yaw angle to zero so the following yaw measurements are 
+     * Resets the IMU's heading angle to zero so the following measurements are 
      * relative to the robot's orientation. This is useful for establishing a 
-     * new heading reference before field-centric driving or autonomous rotation.
+     * new reference before field-centric driving or autonomous rotation.
      * 
-     * Note that resetting yaw does not physically rotate the robot and does not 
+     * Note that resetting does not physically rotate the robot and does not 
      * reset pitch or roll.
      */
-    public void resetYaw() {
+    public void resetHeading() {
         if (imu != null) {
             imu.resetYaw();
         }
@@ -189,32 +189,6 @@ public class RobotHardware {
     //region Drive Utilities and Input Processing
 
     /**
-     * Sets drivetrain motor power while automatically normalizing the inputs.
-     *
-     * @param fl the desired front-left motor power
-     * @param fr the desired front-right motor power
-     * @param bl the desired back-left motor power
-     * @param br the desired back-right motor power
-     */
-    public void setDrivePower(double fl, double fr, double bl, double br) {
-        double max = Math.max(1.0, Math.max(Math.abs(fl),
-                Math.max(Math.abs(fr), Math.max(Math.abs(bl), Math.abs(br)))));
-
-        frontLeft.setPower(fl / max);
-        frontRight.setPower(fr / max);
-        backLeft.setPower(bl / max);
-        backRight.setPower(br / max);
-    }
-
-    /**
-     * Stops all drivetrain motors by setting their power to zero while 
-     * retaining their configured zero-power behavior.
-     */
-    public void stopDriveMotors() {
-        setDrivePower(0, 0, 0, 0);
-    }
-
-    /**
      * Sets the same {@link DcMotor.RunMode} on all four drivetrain motors.
      *
      * @param mode the RunMode to apply to every drivetrain motor
@@ -254,19 +228,19 @@ public class RobotHardware {
      * For example, a positive forward input always results in motion toward 
      * the robot's front, independent of its orientation on the field.
      *
-     * @param x  the lateral translation input
-     * @param y  the longitudinal translation input
-     * @param rx the rotational input
+     * @param forward    the lateral translation input
+     * @param strafe     the longitudinal translation input
+     * @param turn       the rotational input
      *
      * @see #driveFieldCentric(double, double, double)
      */
-    public void driveRobotCentric(double x, double y, double rx) {
-        double fl = y + x + rx;
-        double fr = y - x - rx;
-        double bl = y - x + rx;
-        double br = y + x - rx;
-
-        setDrivePower(fl, fr, bl, br);
+    public void driveRobotCentric(double forward, double strafe, double turn) {      
+        double denominator = Math.max(1.0,
+                Math.abs(forward) + Math.abs(strafe) + Math.abs(turn));
+        frontLeft.setPower((forward + strafe + turn) / denominator);
+        backLeft.setPower((forward - strafe + turn) / denominator);
+        frontRight.setPower((forward - strafe - turn) / denominator);
+        backRight.setPower((forward + strafe - turn) / denominator);
     }
 
     /**
@@ -277,18 +251,18 @@ public class RobotHardware {
      * The IMU heading is used to rotate the requested translation vector into 
      * the robot's coordinate system before applying any drive calculations.
      *
-     * @param x  the lateral field-relative translation input
-     * @param y  the longitudinal field-relative translation input
-     * @param rx the rotational input
+     * @param forward    the lateral translation input
+     * @param strafe     the longitudinal translation input
+     * @param turn       the rotational input
      */
-    public void driveFieldCentric(double x, double y, double rx) {
+    public void driveFieldCentric(double forward, double strafe, double turn) {
         double heading = getHeadingRad();
 
         // Rotate the field-relative translation vector into robot coordinates.
-        double rotX = x * Math.cos(-heading) - y * Math.sin(-heading);
-        double rotY = x * Math.sin(-heading) + y * Math.cos(-heading);
+        double rotatedX = forward * Math.cos(heading) - strafe * Math.sin(heading);
+        double rotatedY = strafe * Math.cos(heading) + forward * Math.sin(heading);
 
-        driveRobotCentric(rotX, rotY, rx);
+        driveRobotCentric(rotatedX, rotatedY, rx);
     }
 
     //endregion
