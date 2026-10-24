@@ -1,14 +1,8 @@
 package org.firstinspires.ftc.team5898;
 
 import androidx.annotation.*;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -27,11 +21,6 @@ import org.firstinspires.ftc.team5898.Constants.*;
 public class RobotHardware {
 
     //region Hardware Device Definitions
-
-    // Internal references to the calling OpMode
-    private OpMode opMode;
-    private HardwareMap hardwareMap;
-    private Telemetry telemetry;
 
     // Drive motors for the mecanum drive base
     private final DcMotorEx frontLeft, frontRight, backLeft, backRight;
@@ -55,23 +44,6 @@ public class RobotHardware {
 
     //endregion
 
-    //region Constructor
-
-    /**
-     * Creates a constructor that stores a reference of the specified OpMode's 
-     * {@link HardwareMap} and {@link Telemetry}. Hardware devices are not mapped 
-     * or initialized until {@link #init()} is called.
-     *
-     * @param opMode the OpMode that owns and gives access to the robot hardware
-     */
-    public RobotHardware(@NonNull OpMode opMode) {
-        this.opMode = opMode;
-        this.hardwareMap = opMode.hardwareMap;
-        this.telemetry = opMode.telemetry;
-    }
-
-    //endregion
-
     //region Initialization
 
     /**
@@ -81,8 +53,10 @@ public class RobotHardware {
      * 
      * The method should be called once during the OpMode's initialization phase,
      * before attempting to control the drivetrain or read the IMU.
+     *
+     * @param hardwareMap The hardware map from the calling OpMode
      */
-    public void init() {
+    public void init(HardwareMap hardwareMap) {
         // Map motors using the names configured in Constants.java.
         frontLeft  = hardwareMap.get(DcMotorEx.class, Hardware.MOTOR_FRONT_LEFT);
         frontRight = hardwareMap.get(DcMotorEx.class, Hardware.MOTOR_FRONT_RIGHT);
@@ -228,9 +202,9 @@ public class RobotHardware {
      * For example, a positive forward input always results in motion toward 
      * the robot's front, independent of its orientation on the field.
      *
-     * @param forward    the lateral translation input
-     * @param strafe     the longitudinal translation input
-     * @param turn       the rotational input
+     * @param forward    The lateral translation input
+     * @param strafe     The longitudinal translation input
+     * @param turn       The rotational input
      *
      * @see #driveFieldCentric(double, double, double)
      */
@@ -251,9 +225,9 @@ public class RobotHardware {
      * The IMU heading is used to rotate the requested translation vector into 
      * the robot's coordinate system before applying any drive calculations.
      *
-     * @param forward    the lateral translation input
-     * @param strafe     the longitudinal translation input
-     * @param turn       the rotational input
+     * @param forward    The lateral translation input
+     * @param strafe     The longitudinal translation input
+     * @param turn       The rotational input
      */
     public void driveFieldCentric(double forward, double strafe, double turn) {
         double heading = getHeadingRad();
