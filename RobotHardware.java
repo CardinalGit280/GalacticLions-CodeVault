@@ -56,7 +56,7 @@ public class RobotHardware {
      *
      * @param hardwareMap The hardware map from the calling OpMode
      */
-    public void init(HardwareMap hardwareMap) {
+    public void init(@NonNull HardwareMap hardwareMap) {
         // Map motors using the names configured in Constants.java.
         frontLeft  = hardwareMap.get(DcMotorEx.class, Hardware.MOTOR_FRONT_LEFT);
         frontRight = hardwareMap.get(DcMotorEx.class, Hardware.MOTOR_FRONT_RIGHT);
