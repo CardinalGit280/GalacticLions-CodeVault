@@ -13,7 +13,7 @@ public class StraferTeleOp_Iterative extends OpMode {
     @Override
     public void init() {
         robot.init(hardwareMap);
-        robot.resetYaw();
+        robot.resetHeading();
 
         // Send telemetry message to signify robot waiting
         telemetry.addData(">", "Robot Ready.  Press START.");
