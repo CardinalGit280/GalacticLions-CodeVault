@@ -201,7 +201,7 @@ public class RobotHardware {
         double rotatedX = forward * Math.cos(heading) - strafe * Math.sin(heading);
         double rotatedY = strafe * Math.cos(heading) + forward * Math.sin(heading);
 
-        driveRobotCentric(rotatedX, rotatedY, rx);
+        driveRobotCentric(rotatedX, rotatedY, turn);
     }
 
     //endregion
